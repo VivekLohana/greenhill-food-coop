@@ -1,4 +1,4 @@
-from src.products import Product, get_available_products, add_product, update_product, withdraw_product
+from src.products import Product, get_available_products, add_product, update_product, withdraw_product, is_valid_quantity
 from src.products import Product, get_available_products, add_product, update_product
 
 
@@ -121,3 +121,27 @@ def test_non_coordinator_cannot_withdraw_product():
 
     assert result == "Permission denied"
     assert product.withdrawn is False
+
+def test_product_stores_per_unit_sale_type():
+    product = Product("Tahini", 9.80, "Round 33", sale_type="Per Unit")
+    assert product.sale_type == "Per Unit"
+
+
+def test_product_stores_per_kilogram_sale_type():
+    product = Product("Oats", 3.40, "Round 33", sale_type="Per Kilogram")
+    assert product.sale_type == "Per Kilogram"
+
+
+def test_per_unit_product_accepts_whole_number():
+    product = Product("Tahini", 9.80, "Round 33", sale_type="Per Unit")
+    assert is_valid_quantity(product, 2) is True
+
+
+def test_per_unit_product_rejects_decimal_quantity():
+    product = Product("Tahini", 9.80, "Round 33", sale_type="Per Unit")
+    assert is_valid_quantity(product, 1.5) is False
+
+
+def test_per_kilogram_product_accepts_decimal_quantity():
+    product = Product("Oats", 3.40, "Round 33", sale_type="Per Kilogram")
+    assert is_valid_quantity(product, 1.5) is True
