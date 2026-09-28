@@ -1,9 +1,10 @@
 class Product:
-    def __init__(self, name, price, round_name, withdrawn=False):
+def __init__(self, name, price, round_name, withdrawn=False, sale_type="Per Unit"):
         self.name = name
         self.price = price
         self.round_name = round_name
         self.withdrawn = withdrawn
+        self.sale_type = sale_type
 
 
 def get_available_products(products, current_round, round_open):
@@ -44,3 +45,11 @@ def withdraw_product(product, is_coordinator):
 
     product.withdrawn = True
     return product
+def is_valid_quantity(product, quantity):
+    if product.sale_type == "Per Unit":
+        return isinstance(quantity, int) and quantity >= 0
+
+    if product.sale_type == "Per Kilogram":
+        return isinstance(quantity, (int, float)) and quantity >= 0
+
+    return False
