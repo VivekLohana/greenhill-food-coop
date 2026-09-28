@@ -17,3 +17,23 @@ def get_available_products(products, current_round, round_open):
             available_products.append(product)
 
     return available_products
+def add_product(products, name, price, round_name, is_coordinator):
+    if not is_coordinator:
+        return "Permission denied"
+
+    product = Product(name, price, round_name)
+    products.append(product)
+    return product
+
+
+def update_product(product, name=None, price=None, is_coordinator=False):
+    if not is_coordinator:
+        return "Permission denied"
+
+    if name is not None:
+        product.name = name
+
+    if price is not None:
+        product.price = price
+
+    return product
