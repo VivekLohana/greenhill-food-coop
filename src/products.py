@@ -37,3 +37,10 @@ def update_product(product, name=None, price=None, is_coordinator=False):
         product.price = price
 
     return product
+    
+def withdraw_product(product, is_coordinator):
+    if not is_coordinator:
+        return "Permission denied"
+
+    product.withdrawn = True
+    return product
