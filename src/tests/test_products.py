@@ -25,7 +25,6 @@ def test_withdrawn_products_are_not_returned():
     assert len(result) == 1
     assert result[0].name == "Oats"
 
-
 def test_message_when_round_is_closed():
     products = [
         Product("Oats", 3.40, "Round 33")
@@ -34,7 +33,9 @@ def test_message_when_round_is_closed():
     result = get_available_products(products, "Round 33", False)
 
     assert result == "No open round"
-   def test_coordinator_can_add_product():
+
+
+def test_coordinator_can_add_product():
     products = []
 
     product = add_product(
@@ -48,6 +49,7 @@ def test_message_when_round_is_closed():
     assert len(products) == 1
     assert product.name == "Rice"
     assert product.price == 4.50
+
 
 def test_coordinator_can_update_product():
     product = Product("Rice", 4.50, "Round 33")
