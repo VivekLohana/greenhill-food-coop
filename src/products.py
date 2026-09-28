@@ -1,5 +1,5 @@
 class Product:
-def __init__(self, name, price, round_name, withdrawn=False, sale_type="Per Unit"):
+    def __init__(self, name, price, round_name, withdrawn=False, sale_type="Per Unit"):
         self.name = name
         self.price = price
         self.round_name = round_name
