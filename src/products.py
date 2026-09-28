@@ -53,3 +53,10 @@ def is_valid_quantity(product, quantity):
         return isinstance(quantity, (int, float)) and quantity >= 0
 
     return False
+    
+def create_order_line(product, quantity):
+    return {
+        "product_name": product.name,
+        "unit_price": product.price,
+        "quantity": quantity
+    }
