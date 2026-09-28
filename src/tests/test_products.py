@@ -1,4 +1,4 @@
-from src.products import Product, get_available_products, add_product, update_product, withdraw_product, is_valid_quantity
+from src.products import Product, get_available_products, add_product, update_product, withdraw_product, is_valid_quantity, create_order_line
 from src.products import Product, get_available_products, add_product, update_product
 
 
@@ -145,3 +145,35 @@ def test_per_unit_product_rejects_decimal_quantity():
 def test_per_kilogram_product_accepts_decimal_quantity():
     product = Product("Oats", 3.40, "Round 33", sale_type="Per Kilogram")
     assert is_valid_quantity(product, 1.5) is True
+
+def test_order_line_stores_product_price():
+    product = Product("Oats", 3.40, "Round 33", sale_type="Per Kilogram")
+
+    order_line = create_order_line(product, 2)
+
+    assert order_line["unit_price"] == 3.40
+    assert order_line["quantity"] == 2
+
+
+def test_historical_price_does_not_change_when_product_price_changes():
+    product = Product("Oats", 3.40, "Round 33", sale_type="Per Kilogram")
+
+    order_line = create_order_line(product, 2)
+
+    product.price = 4.20
+
+    assert product.price == 4.20
+    assert order_line["unit_price"] == 3.40
+
+
+def test_historical_order_total_remains_based_on_original_price():
+    product = Product("Oats", 3.40, "Round 33", sale_type="Per Kilogram")
+
+    order_line = create_order_line(product, 2)
+    original_total = order_line["unit_price"] * order_line["quantity"]
+
+    product.price = 4.20
+    historical_total = order_line["unit_price"] * order_line["quantity"]
+
+    assert original_total == 6.80
+    assert historical_total == 6.80
