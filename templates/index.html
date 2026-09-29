@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Greenhill Food Co-op</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f4;
+            color: #222;
+        }
+
+        header {
+            background: #2f6b3b;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .product {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .product h2 {
+            margin-top: 0;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sale-type {
+            color: #666;
+        }
+
+        .message {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Greenhill Food Co-op</h1>
+    <p>Weekly Ordering System</p>
+</header>
+
+<main>
+
+    <h2>Current Ordering Round</h2>
+    <p>{{ current_round }}</p>
+
+    {% if message %}
+
+        <div class="message">
+            {{ message }}
+        </div>
+
+    {% else %}
+
+        <div class="products">
+
+            {% for product in products %}
+
+                <div class="product">
+
+                    <h2>{{ product.name }}</h2>
+
+                    <div class="price">
+                        ${{ "%.2f"|format(product.price) }}
+
+                        {% if product.sale_type == "Per Kilogram" %}
+                            / kg
+                        {% else %}
+                            / unit
+                        {% endif %}
+                    </div>
+
+                    <p class="sale-type">
+                        {{ product.sale_type }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+</main>
+
+</body>
+</html>
