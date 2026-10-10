@@ -21,3 +21,11 @@ def test_health_endpoint():
 
     assert data["status"] == "ok"
     assert data["application"] == "Greenhill Food Co-op"
+
+def test_closed_round_message_displays():
+    client = app.test_client()
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert b"No open round" in response.data
