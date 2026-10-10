@@ -42,7 +42,7 @@ def home():
     available_products = get_available_products(
         products,
         CURRENT_ROUND,
-        False
+        True
     )
 
     if isinstance(available_products, str):
