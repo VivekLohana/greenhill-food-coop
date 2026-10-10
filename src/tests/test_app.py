@@ -22,9 +22,16 @@ def test_health_endpoint():
     assert data["status"] == "ok"
     assert data["application"] == "Greenhill Food Co-op"
 
-def test_closed_round_message_displays():
-    client = app.test_client()
 
+def test_closed_round_message_displays(monkeypatch):
+    from app import app
+
+    monkeypatch.setattr(
+        "app.get_available_products",
+        lambda products, current_round, is_open: "No open round"
+    )
+
+    client = app.test_client()
     response = client.get("/")
 
     assert response.status_code == 200
