@@ -60,6 +60,20 @@ def home():
         message=None
     )
 
+@app.route("/history")
+def order_history():
+    from src.products import create_order_line
+
+    product = products[0]
+    order_line = create_order_line(product, 2)
+
+    original_price = order_line["unit_price"]
+
+    return render_template(
+        "history.html",
+        order_line=order_line,
+        total=original_price * order_line["quantity"]
+    )
 
 @app.route("/health")
 def health():
