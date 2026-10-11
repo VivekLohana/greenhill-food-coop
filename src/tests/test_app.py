@@ -36,3 +36,13 @@ def test_closed_round_message_displays(monkeypatch):
 
     assert response.status_code == 200
     assert b"No open round" in response.data
+    
+def test_historical_order_displays_original_price():
+    client = app.test_client()
+    response = client.get("/history")
+
+    assert response.status_code == 200
+    assert b"Historical Order" in response.data
+    assert b"Original Price: $3.40" in response.data
+    assert b"Order Total: $6.80" in response.data
+

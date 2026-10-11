@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Greenhill Food Co-op - Order History</title>
+</head>
+<body>
+    <h1>Historical Order</h1>
+
+    <p>Product: {{ order_line["product_name"] }}</p>
+    <p>Original Price: ${{ "%.2f"|format(order_line["unit_price"]) }}</p>
+    <p>Quantity: {{ order_line["quantity"] }}</p>
+    <p>Order Total: ${{ "%.2f"|format(total) }}</p>
+
+    <a href="/">Back to Products</a>
+</body>
+</html>
