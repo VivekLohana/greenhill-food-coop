@@ -177,3 +177,24 @@ def test_historical_order_total_remains_based_on_original_price():
 
     assert original_total == 6.80
     assert historical_total == 6.80
+
+
+def test_updated_product_appears_in_round_list():
+    products = [
+        Product("Rice", 4.50, "Round 33")
+    ]
+
+    update_product(
+        products[0],
+        name="Brown Rice",
+        price=4.80,
+        is_coordinator=True
+    )
+
+    result = get_available_products(
+        products, "Round 33", True
+    )
+
+    assert len(result) == 1
+    assert result[0].name == "Brown Rice"
+    assert result[0].price == 4.80
