@@ -198,3 +198,23 @@ def test_updated_product_appears_in_round_list():
     assert len(result) == 1
     assert result[0].name == "Brown Rice"
     assert result[0].price == 4.80
+
+
+def test_withdrawn_product_preserves_historical_order():
+    product = Product("Oats", 3.40, "Round 33", sale_type="Per Kilogram")
+    products = [product]
+    order_line = create_order_line(product, 2)
+
+    withdraw_product(product, True)
+
+    available = get_available_products(products, "Round 33", True)
+
+    assert len(available) == 0
+    assert len(products) == 1
+    assert products[0] is product
+    assert product.withdrawn is True
+
+    assert order_line["unit_price"] == 3.40
+    assert order_line["quantity"] == 2
+    assert order_line["unit_price"] * order_line["quantity"] == 6.80
+
