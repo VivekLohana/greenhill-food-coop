@@ -60,3 +60,10 @@ def create_order_line(product, quantity):
         "unit_price": product.price,
         "quantity": quantity
     }
+def calculate_order_total(order_lines):
+    total = 0
+
+    for line in order_lines:
+        total += line["unit_price"] * line["quantity"]
+
+    return round(total, 2)

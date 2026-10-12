@@ -217,4 +217,22 @@ def test_withdrawn_product_preserves_historical_order():
     assert order_line["unit_price"] == 3.40
     assert order_line["quantity"] == 2
     assert order_line["unit_price"] * order_line["quantity"] == 6.80
+def test_calculate_order_total():
+    from src.products import calculate_order_total
 
+    order_lines = [
+        {
+            "product_name": "Oats",
+            "unit_price": 3.40,
+            "quantity": 2
+        },
+        {
+            "product_name": "Tahini",
+            "unit_price": 9.80,
+            "quantity": 1
+        }
+    ]
+
+    result = calculate_order_total(order_lines)
+
+    assert result == 16.60
