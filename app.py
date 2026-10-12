@@ -1,10 +1,17 @@
+
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 
 from src.products import Product, get_available_products
-
-
+from src.members import (
+    register_member,
+    search_members,
+    get_member,
+    update_member,
+    activate_member,
+    deactivate_member
+)
 app = Flask(__name__)
 
 CURRENT_ROUND = "Round 33"
@@ -36,6 +43,8 @@ products = [
     )
 ]
 
+members = []
+
 
 @app.route("/")
 def home():
@@ -60,6 +69,7 @@ def home():
         message=None
     )
 
+
 @app.route("/history")
 def order_history():
     from src.products import create_order_line
@@ -75,12 +85,119 @@ def order_history():
         total=original_price * order_line["quantity"]
     )
 
+
 @app.route("/health")
 def health():
     return {
         "status": "ok",
         "application": "Greenhill Food Co-op"
     }
+
+
+@app.route("/members")
+def member_list():
+    search_query = request.args.get("search", "").strip()
+
+    if search_query:
+        displayed_members = search_members(
+            members,
+            search_query
+        )
+    else:
+        displayed_members = members
+
+    return render_template(
+        "members.html",
+        members=displayed_members,
+        message=None,
+        search_query=search_query
+    )
+
+
+@app.route("/members/register", methods=["POST"])
+def member_register():
+    name = request.form.get("name", "").strip()
+    email = request.form.get("email", "").strip()
+    phone = request.form.get("phone", "").strip()
+
+    next_id = max(
+        (member.member_id for member in members),
+        default=0
+    ) + 1
+
+    result = register_member(
+        members,
+        next_id,
+        name,
+        email,
+        phone
+    )
+
+    if isinstance(result, str):
+        return render_template(
+            "members.html",
+            members=members,
+            message=result,
+            search_query=""
+        ), 400
+
+    return redirect(url_for("member_list"))
+
+
+@app.route("/members/<int:member_id>/edit", methods=["GET", "POST"])
+def member_edit(member_id):
+    member = get_member(members, member_id)
+
+    if member is None:
+        return "Member not found", 404
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+
+        result = update_member(
+            members, member_id, name, email, phone
+        )
+
+        if isinstance(result, str):
+            return render_template(
+                "edit_member.html",
+                member=member,
+                message=result
+            ), 400
+
+        return redirect(url_for("member_list"))
+
+    return render_template(
+        "edit_member.html",
+        member=member,
+        message=None
+    )
+
+
+@app.route("/members/<int:member_id>/deactivate", methods=["POST"])
+def member_deactivate(member_id):
+    member = get_member(members, member_id)
+
+    if member is None:
+        return "Member not found", 404
+
+    deactivate_member(members, member_id)
+
+    return redirect(url_for("member_list"))
+
+
+@app.route("/members/<int:member_id>/activate", methods=["POST"])
+def member_activate(member_id):
+    member = get_member(members, member_id)
+
+    if member is None:
+        return "Member not found", 404
+
+    activate_member(members, member_id)
+
+    return redirect(url_for("member_list"))
 
 
 if __name__ == "__main__":

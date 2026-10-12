@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Management</title>
+</head>
+<body>
+
+<h1>Greenhill Food Co-op - Member Management</h1>
+
+<h2>Search Members</h2>
+<form method="GET" action="/members">
+    <label for="search">Search by name or email:</label>
+    <input type="text" id="search" name="search"
+           value="{{ search_query or '' }}">
+    <button type="submit">Search</button>
+    <a href="/members">Show All Members</a>
+</form>
+
+<h2>Register New Member</h2>
+<form method="POST" action="/members/register">
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="phone">Phone:</label>
+    <input type="tel" id="phone" name="phone" required>
+
+    <button type="submit">Register Member</button>
+</form>
+
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}
+
+<hr>
+
+<h2>Registered Members</h2>
+
+{% if members %}
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>Member ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        <tr>
+            <td>{{ member.member_id }}</td>
+            <td>{{ member.name }}</td>
+            <td>{{ member.email }}</td>
+            <td>{{ member.phone }}</td>
+            <td>{{ member.status }}</td>
+            <td>
+                <a href="{{ url_for('member_edit', member_id=member.member_id) }}">
+                    Edit
+                </a>
+
+                {% if member.status == "Active" %}
+                <form method="POST"
+                      action="{{ url_for('member_deactivate', member_id=member.member_id) }}"
+                      style="display:inline;">
+                    <button type="submit">Deactivate</button>
+                </form>
+                {% else %}
+                <form method="POST"
+                      action="{{ url_for('member_activate', member_id=member.member_id) }}"
+                      style="display:inline;">
+                    <button type="submit">Activate</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No members found.</p>
+{% endif %}
+
+</body>
+</html>
