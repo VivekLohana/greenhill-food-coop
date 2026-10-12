@@ -35,3 +35,49 @@ def confirm_order(order_lines):
         "items": len(order_lines),
         "total": total
     }
+def edit_order_item(order_lines, product_name, new_quantity):
+    if new_quantity <= 0:
+        return "Invalid quantity"
+
+    for line in order_lines:
+        if line["product_name"] == product_name:
+            line["quantity"] = new_quantity
+            return "Order item updated"
+
+    return "Product not found"
+
+
+def remove_order_item(order_lines, product_name):
+    for line in order_lines:
+        if line["product_name"] == product_name:
+            order_lines.remove(line)
+            return "Order item removed"
+
+    return "Product not found"
+
+
+def cancel_order(order):
+    if order["status"] == "Cancelled":
+        return "Order already cancelled"
+
+    order["status"] = "Cancelled"
+    return order
+
+
+def get_order_status(order):
+    return order["status"]
+
+
+def get_order_summary(order_lines):
+    return {
+        "items": len(order_lines),
+        "total": calculate_order_total(order_lines),
+        "products": order_lines.copy()
+    }
+
+
+def get_order_history(orders):
+    return [
+        order for order in orders
+        if order["status"] in ("Confirmed", "Cancelled")
+    ]
