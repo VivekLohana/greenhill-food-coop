@@ -35,6 +35,8 @@ def confirm_order(order_lines):
         "items": len(order_lines),
         "total": total
     }
+
+
 def edit_order_item(order_lines, product_name, new_quantity):
     if new_quantity <= 0:
         return "Invalid quantity"
@@ -81,3 +83,33 @@ def get_order_history(orders):
         order for order in orders
         if order["status"] in ("Confirmed", "Cancelled")
     ]
+
+
+def search_orders_by_status(orders, status):
+    return [
+        order for order in orders
+        if order["status"].lower() == status.lower()
+    ]
+
+
+def sort_orders_by_total(orders, descending=False):
+    return sorted(
+        orders,
+        key=lambda order: order["total"],
+        reverse=descending
+    )
+
+
+def get_order_statistics(orders):
+    confirmed_orders = [
+        order for order in orders
+        if order["status"] == "Confirmed"
+    ]
+
+    return {
+        "total_orders": len(orders),
+        "confirmed_orders": len(confirmed_orders),
+        "total_revenue": round(
+            sum(order["total"] for order in confirmed_orders), 2
+        )
+    }

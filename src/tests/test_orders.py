@@ -1,6 +1,19 @@
 
 from src.products import Product, create_order_line
-from src.orders import validate_order, calculate_order_total, confirm_order
+from src.orders import (
+    validate_order,
+    calculate_order_total,
+    confirm_order,
+    edit_order_item,
+    remove_order_item,
+    cancel_order,
+    get_order_status,
+    get_order_summary,
+    get_order_history,
+    search_orders_by_status,
+    sort_orders_by_total,
+    get_order_statistics,
+)
 
 
 def test_valid_order():
@@ -48,15 +61,6 @@ def test_confirm_order():
 
 def test_empty_order():
     assert confirm_order([]) == "Cannot confirm an empty order"
-
-from src.orders import (
-    edit_order_item,
-    remove_order_item,
-    cancel_order,
-    get_order_status,
-    get_order_summary,
-    get_order_history
-)
 
 
 def test_edit_order_item():
@@ -122,3 +126,45 @@ def test_get_order_history():
     assert len(result) == 2
     assert result[0]["status"] == "Confirmed"
     assert result[1]["status"] == "Cancelled"
+
+
+def test_search_orders_by_status():
+    orders = [
+        {"status": "Confirmed", "total": 15.00},
+        {"status": "Pending", "total": 10.00},
+        {"status": "Confirmed", "total": 20.00}
+    ]
+
+    result = search_orders_by_status(orders, "confirmed")
+
+    assert len(result) == 2
+    assert all(order["status"] == "Confirmed" for order in result)
+
+
+def test_sort_orders_by_total():
+    orders = [
+        {"status": "Confirmed", "total": 20.00},
+        {"status": "Pending", "total": 5.00},
+        {"status": "Confirmed", "total": 10.00}
+    ]
+
+    ascending = sort_orders_by_total(orders)
+    descending = sort_orders_by_total(orders, descending=True)
+
+    assert [order["total"] for order in ascending] == [5.00, 10.00, 20.00]
+    assert [order["total"] for order in descending] == [20.00, 10.00, 5.00]
+
+
+def test_get_order_statistics():
+    orders = [
+        {"status": "Confirmed", "total": 20.00},
+        {"status": "Pending", "total": 10.00},
+        {"status": "Confirmed", "total": 15.00},
+        {"status": "Cancelled", "total": 5.00}
+    ]
+
+    result = get_order_statistics(orders)
+
+    assert result["total_orders"] == 4
+    assert result["confirmed_orders"] == 2
+    assert result["total_revenue"] == 35.00
